@@ -41,12 +41,12 @@ still works using deterministic keyword/regex fallbacks.
 ## 1. Start the AI service (Python)
 
 ```bash
-cd AI_stuff
+cd AI
 python -m pip install -r requirements.txt
 python -m uvicorn api.intent_api:app --host 0.0.0.0 --port 8010
 ```
 
-Must be run with `AI_stuff` as the working directory (it loads the fraud model and prompt
+Must be run with `AI` as the working directory (it loads the fraud model and prompt
 templates via paths relative to it). Verify with `http://localhost:8010/docs`.
 
 ## 2. Start the backend (Node)
