@@ -61,3 +61,26 @@ System Architecture
 |  * Session Trajectory Analysis: Detects Multi-Step Exfiltration & Cascading Drift  |
 |  * Adapt Phase: Feeds Behavioral Anomaly Signals back into OPA Policy Rules        |
 +------------------------------------------------------------------------------------+
+AIML Member File Organization:-
+ai-service/
+├── config.py                         # Environment vars, LLM model settings, thresholds
+├── api/
+│   └── intent_api.py                 # FastAPI/Flask endpoint handlers
+├── services/
+│   ├── pipeline.py                   # Orchestrates execution flow across services
+│   ├── injection_detector.py         # Prompt injection shield
+│   ├── intent_extractor.py           # Core extraction logic
+│   ├── intent_validator.py           # Output validation logic
+│   ├── drift_detector.py             # Latency, output quality, and format tracking
+│   └── expected_action_generator.py  # Generates expected backend action payloads
+├── schemas/
+│   ├── request_schema.py             # Incoming payload validation schemas
+│   └── intent_schema.py              # Pydantic models for structured outputs
+├── prompts/
+│   ├── injection_prompt.txt          # Detection system prompts
+│   ├── intent_prompt.txt             # Intent extraction prompts
+│   └── expected_action_prompt.txt    # Action generation prompts
+└── tests/
+    ├── test_runner.py                # Automated evaluation suite executor
+    ├── safe_cases.json               # Benchmark safe test cases
+    └── attack_cases.json             # Security test cases (prompt injection/jailbreaks)
