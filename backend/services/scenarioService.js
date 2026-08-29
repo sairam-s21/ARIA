@@ -128,7 +128,13 @@ async function generateSampleScenario(scenarioType) {
   if (aiServiceUrl) {
     try {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 6000);
+      // Generous timeout deliberately: this is the one call on the
+      // non-security-critical path (see note above), and free-tier hosts
+      // like Render spin the AI service down after idle, so a cold start
+      // alone can take 20s+. A short timeout here would make every
+      // "generate scenario" click after idle silently fall back to the
+      // canned local templates instead of actually reaching the LLM.
+      const timeout = setTimeout(() => controller.abort(), 20000);
 
       const response = await fetch(`${aiServiceUrl}/generate-scenario`, {
         method: 'POST',
