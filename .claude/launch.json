@@ -4,14 +4,14 @@
     {
       "name": "ai-service",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "uvicorn", "api.intent_api:app", "--host", "0.0.0.0", "--port", "8000"],
-      "port": 8000
+      "runtimeArgs": ["-m", "uvicorn", "api.intent_api:app", "--host", "0.0.0.0", "--port", "8010"],
+      "port": 8010
     },
     {
       "name": "backend",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["backend/server.js"],
-      "port": 5000
+      "runtimeArgs": ["server.js"],
+      "port": 5050
     },
     {
       "name": "frontend",

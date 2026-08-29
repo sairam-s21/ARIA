@@ -13,12 +13,12 @@ monitoring watches for cascading or emerging-threat behaviour after a decision.
 ## Architecture
 
 ```
-frontend/frontend   React + Vite + Tailwind UI (port 5173)
+frontend    React + Vite + Tailwind UI (port 5173)
         |  HTTP
-backend/backend      Node/Express security pipeline (port 5050)
+backend      Node/Express security pipeline (port 5050)
         |  HTTP (optional — falls back to local heuristics if unreachable)
-AI_stuff              Python/FastAPI AI service: LLM intent extraction,
-                       prompt-injection detection, XGBoost fraud model (port 8010)
+AI_stuff      Python/FastAPI AI service: LLM intent extraction,
+               prompt-injection detection, XGBoost fraud model (port 8010)
 ```
 
 The Node backend is the actual security gate (authority, policy, risk, consistency, behavior
@@ -26,17 +26,17 @@ monitoring). The Python AI service is optional-but-recommended: it adds LLM-base
 extraction/scenario generation and a trained fraud classifier. If it's not running, the backend
 still works using deterministic keyword/regex fallbacks.
 
-> **Note on ports:** this machine has a WSL `wslrelay` process squatting on the "obvious" ports
-> 5000 and 8000, which caused the backend/AI service to intermittently receive traffic meant for
-> something else. Ports were moved to **5050** (backend) and **8010** (AI service) to avoid that
-> conflict — see `backend/backend/.env`, `frontend/frontend/.env`, and `AI_stuff` below.
+> **Note on ports:** the dev machine this was built on has a WSL `wslrelay` process squatting on
+> the "obvious" ports 5000 and 8000, which caused the backend/AI service to intermittently
+> receive traffic meant for something else. Ports were moved to **5050** (backend) and **8010**
+> (AI service) to avoid that conflict — see `backend/.env` and `frontend/.env` below.
 
 ## Prerequisites
 
 - Node.js 18+
 - Python 3.10+ (tested on 3.14)
-- The root [`.env`](.env) already has `NVIDIA_API_KEY` (used by the AI service's LLM calls) and
-  Supabase credentials.
+- `AI_stuff/config.py` loads `NVIDIA_API_KEY` (used by the AI service's LLM calls) from a root
+  `.env` — create one at the project root with `NVIDIA_API_KEY=...` if it's not already there.
 
 ## 1. Start the AI service (Python)
 
@@ -54,21 +54,21 @@ templates via paths relative to it). Verify with `http://localhost:8010/docs`.
 ```bash
 cd backend
 npm install
-node backend/server.js
+node server.js
 ```
 
-Runs on `http://localhost:5050` (see `backend/backend/.env`: `PORT=5050`,
+Runs on `http://localhost:5050` (see `backend/.env`: `PORT=5050`,
 `AI_SERVICE_URL=http://localhost:8010`). Verify with `http://localhost:5050/api/health`.
 
 ## 3. Start the frontend (React)
 
 ```bash
-cd frontend/frontend
+cd frontend
 npm install
 npm run dev
 ```
 
-Opens on `http://localhost:5173` (see `frontend/frontend/.env`: `VITE_BACKEND_URL=http://localhost:5050`).
+Opens on `http://localhost:5173` (see `frontend/.env`: `VITE_BACKEND_URL=http://localhost:5050`).
 
 ## Deployment
 
@@ -76,12 +76,11 @@ Three services, three targets:
 
 | Service | Where | Why |
 |---|---|---|
-| Frontend (`frontend/frontend`) | Vercel | Static Vite build, zero config changes needed |
-| Backend (`backend`) | Vercel | Already has `backend/vercel.json`; runs as a serverless function |
-| AI service (`AI_stuff`) | Render (or Railway) | `xgboost` + `pandas` risk exceeding Vercel's serverless size limit, and a loaded ML model doesn't suit cold-start serverless well. Render/Railway run it as a normal long-running process instead. |
+| Frontend (`frontend/`) | Vercel | Static Vite build, zero config changes needed |
+| Backend (`backend/`) | Vercel | Already has `backend/vercel.json`; runs as a serverless function |
+| AI service (`AI_stuff/`) | Render (or Railway) | `xgboost` + `pandas` risk exceeding Vercel's serverless size limit, and a loaded ML model doesn't suit cold-start serverless well. Render/Railway run it as a normal long-running process instead. |
 
-All three need a git remote (GitHub/GitLab) connected, since that's how both Vercel and Render
-pull your code.
+All three need this GitHub repo connected, since that's how both Vercel and Render pull your code.
 
 **1. AI service → Render.** This repo includes [`render.yaml`](render.yaml) at the project root.
 On Render: New → Blueprint → point it at this repo → it reads `render.yaml` and creates the
@@ -91,21 +90,16 @@ requirements.txt`, start `uvicorn api.intent_api:app --host 0.0.0.0 --port $PORT
 blueprint deliberately, so the real secret is never committed to the repo). Note the resulting
 URL, e.g. `https://aria-ai-service.onrender.com`.
 
-**2. Backend → Vercel.** From `backend/`: `vercel` (link the existing **finsec** project — see
-below — or create a new one), then in Vercel dashboard → Settings → Environment Variables set:
+**2. Backend → Vercel.** New Project → import this repo → set **Root Directory** to `backend` →
+add Environment Variables:
 - `AI_SERVICE_URL` = your Render URL from step 1
-- `SUPABASE_URL`, `SUPABASE_ANON_KEY` (from `backend/backend/.env`)
+- `SUPABASE_URL`, `SUPABASE_ANON_KEY` (from `backend/.env`)
 - `ELEVENLABS_API_KEY` / `ELEVENLABS_VOICE_ID` (optional)
 
-Then `vercel --prod`. Note the resulting URL, e.g. `https://finsec.vercel.app`.
+Deploy. Note the resulting URL, e.g. `https://finsec.vercel.app`.
 
-> This repo already has two *different* linked Vercel projects sitting locally —
-> `backend/.vercel` → project **finsec**, and `backend/backend/.vercel` → project **backend**
-> (likely from an earlier deploy run from the wrong directory). Pick one before deploying again;
-> **finsec** is the one that lines up with where `vercel.json` actually lives.
-
-**3. Frontend → Vercel.** From `frontend/frontend/`: `vercel` (new project), set env var
-`VITE_BACKEND_URL` to the backend URL from step 2, then `vercel --prod`.
+**3. Frontend → Vercel.** New Project → import the same repo again → set **Root Directory** to
+`frontend` → add Environment Variable `VITE_BACKEND_URL` = the backend URL from step 2 → Deploy.
 
 No code changes are required for any of this — every cross-service link (`AI_SERVICE_URL`,
 `VITE_BACKEND_URL`) is already read from an environment variable, never hardcoded.
@@ -116,28 +110,32 @@ No code changes are required for any of this — every cross-service link (`AI_S
   "New Safe Example" / "New Injection Example" to generate a matched or deliberately-mismatched
   pair, then **Analyze Action** to run it through the full security pipeline.
 - **Dashboard / Transactions / Security Log** — live history of every decision (persisted to
-  `backend/backend/data/transactions.json`).
-- **Agents** — the registered agent registry (`backend/backend/data/agents.json`): each agent has
+  `backend/data/transactions.json`).
+- **Agents** — the registered agent registry (`backend/data/agents.json`): each agent has
   a role, allowed assets, a max transaction amount, approved contracts, and allowed action types.
 - **Policies** — the enforced control list.
 
 ## Fixes made to get this running end-to-end
 
-- `AI_stuff/config.py`: `NVIDIA_API_KEY` in the root `.env` has a stray leading space inside the
-  quotes (`" nvapi-..."`), which `python-dotenv` preserves literally. Added a validator that
-  strips it regardless of source, so a malformed key never reaches the NVIDIA API.
-- `backend/backend/services/intentService.js`: the keyword-based intent classifier used plain
-  substring matching, so `"Uniswap"` (contains `"swap"`) made any `"approve Uniswap..."` intent
-  get misclassified as a `SWAP`, which then falsely flagged a legitimate approve-to-Uniswap
+- `AI_stuff/config.py`: `NVIDIA_API_KEY` in `.env` has a stray leading space inside the quotes
+  (`" nvapi-..."`), which `python-dotenv` preserves literally. Added a validator that strips it
+  regardless of source, so a malformed key never reaches the NVIDIA API.
+- `backend/services/intentService.js`: the keyword-based intent classifier used plain substring
+  matching, so `"Uniswap"` (contains `"swap"`) made any `"approve Uniswap..."` intent get
+  misclassified as a `SWAP`, which then falsely flagged a legitimate approve-to-Uniswap
   transaction as an intent/transaction mismatch (false `CONSTRAIN`/`BLOCK`). Switched to
-  word-boundary matching. Same fix applied to the fallback check in
-  `backend/backend/services/consistencyEngine.js`.
-- `backend/backend/services/scenarioService.js` and `AI_stuff/api/intent_api.py`: one of the
-  built-in "safe" demo scenarios was itself ambiguously worded ("Approve Uniswap... for a
-  scheduled swap" — two real action verbs in one sentence), which would still trigger a false
-  mismatch after the fix above. Reworded it.
-- Moved backend/AI-service ports off 5000/8000 to 5050/8010 to avoid the WSL relay port conflict
-  described above.
+  word-boundary matching, ranked by which verb appears earliest in the sentence. Same fix applied
+  to the fallback check in `backend/services/consistencyEngine.js`.
+- `backend/services/scenarioService.js` and `AI_stuff/api/intent_api.py`: one of the built-in
+  "safe" demo scenarios was itself ambiguously worded ("Approve Uniswap... for a scheduled swap"
+  — two real action verbs in one sentence), which would still trigger a false mismatch after the
+  fix above. Reworded it.
+- `frontend/src/services/api.ts`: `TransactionLog` was missing the `consistency` field the
+  backend actually sends, which broke `tsc -b` / `npm run build`. Added it.
+- Moved backend/AI-service ports off 5000/8000 to 5050/8010 to avoid a local WSL relay port
+  conflict.
+- Flattened the originally double-nested `frontend/frontend/` and `backend/backend/` folders to
+  `frontend/` and `backend/`, so each is a clean Vercel "Root Directory" on its own.
 
 Everything else (transaction decoding/simulation, policy engine, risk scoring, behavioral
 anomaly detection, post-execution monitoring, the ML fraud model wiring, and the full frontend)
