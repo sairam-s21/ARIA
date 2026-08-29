@@ -1,4 +1,9 @@
-const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000').trim()
+// Strips any trailing slash(es): every call site below appends a path that
+// already starts with '/', so a VITE_BACKEND_URL set with a trailing slash
+// (e.g. "https://host.vercel.app/") would otherwise produce a double slash
+// (".../api/overview") that Vercel's routing fails on with no response —
+// which the browser then reports as a misleading CORS error.
+const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:5050').trim().replace(/\/+$/, '')
 
 export interface TransactionInput {
   type: 'swap' | 'approve' | 'transfer' | 'stake' | 'unknown'
