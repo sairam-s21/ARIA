@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const supabase = require('../services/supabaseClient');
 const { extractIntent } = require('../services/intentService');
 const { verifyAuthority } = require('../services/authorityService');
 const { decodeTransaction } = require('../services/transactionDecoder');
@@ -16,38 +17,69 @@ const dataDir = process.env.VERCEL ? '/tmp' : path.join(__dirname, '../data');
 const transactionsFilePath = path.join(dataDir, 'transactions.json');
 const agentsFilePath = path.join(__dirname, '../data/agents.json');
 
-function loadTransactionRecords() {
+// Vercel's deployment bundle is read-only, and even /tmp there is scoped to
+// a single serverless instance -- a write in one invocation is not visible
+// to a GET handled by a different (or later, cold-started) instance, so a
+// local file can never be a real transaction log in production. Supabase is
+// the actual store; the file is kept only as an offline/local-dev fallback
+// for when Supabase is unreachable.
+function loadTransactionRecordsFromFile() {
   try {
     if (!fs.existsSync(transactionsFilePath)) return [];
     const fileData = fs.readFileSync(transactionsFilePath, 'utf8');
     return JSON.parse(fileData || '[]');
   } catch (err) {
-    console.error('Failed to read transaction log:', err);
+    console.error('Failed to read local transaction log:', err);
     return [];
   }
 }
 
-function logTransactionRecord(record) {
+function logTransactionRecordToFile(record) {
   try {
-    // Vercel's deployment bundle is read-only, which is why dataDir is
-    // /tmp there instead of the repo's data/ folder -- but /tmp is also
-    // only local to a single serverless instance and isn't guaranteed to
-    // survive a cold start, so this is best-effort persistence for the
-    // demo (transactions logged during a warm instance's lifetime show up
-    // in the Dashboard/Transactions/Security Log), not a durable store.
-    // A previous version skipped writing entirely on Vercel, which meant
-    // the transaction log was permanently empty in production. For real
-    // durability this should write to a proper database (a Supabase
-    // client already exists at services/supabaseClient.js but isn't wired
-    // up to a transactions table yet).
     if (!fs.existsSync(dataDir)) {
       fs.mkdirSync(dataDir, { recursive: true });
     }
-    const records = loadTransactionRecords();
+    const records = loadTransactionRecordsFromFile();
     records.push({ ...record, timestamp: new Date().toISOString() });
     fs.writeFileSync(transactionsFilePath, JSON.stringify(records, null, 2));
   } catch (err) {
-    console.error('Failed to write transaction log:', err);
+    console.error('Failed to write local transaction log:', err);
+  }
+}
+
+async function loadTransactionRecords() {
+  try {
+    const { data, error } = await supabase
+      .from('transactions')
+      .select('id, agent_id, user_intent, transaction, result, created_at')
+      .order('id', { ascending: true });
+    if (error) throw error;
+    return (data || []).map((row) => ({
+      id: row.id,
+      agentId: row.agent_id,
+      userIntent: row.user_intent,
+      transaction: row.transaction,
+      result: row.result,
+      timestamp: row.created_at
+    }));
+  } catch (err) {
+    console.error('Supabase read failed, falling back to local file:', err.message);
+    return loadTransactionRecordsFromFile();
+  }
+}
+
+async function logTransactionRecord(record) {
+  try {
+    const { error } = await supabase.from('transactions').insert({
+      agent_id: record.agentId,
+      user_intent: record.userIntent,
+      transaction: record.transaction,
+      result: record.result
+    });
+    if (error) throw error;
+  } catch (err) {
+    console.error('Supabase write failed, falling back to local file:', err.message);
+    logTransactionRecordToFile(record);
   }
 }
 
@@ -137,7 +169,7 @@ exports.analyzeTransaction = async (req, res) => {
     }
 
     const injection = detectPromptInjection(userIntent);
-    const history = loadTransactionRecords();
+    const history = await loadTransactionRecords();
 
     let transactionSource = 'provided';
     if (transaction == null) {
@@ -159,7 +191,7 @@ exports.analyzeTransaction = async (req, res) => {
         extras: { injection: injection.detected, behaviorFlags }
       });
       await speakHighRiskAlert(authorityCheck.reason);
-      logTransactionRecord({ agentId, userIntent, transaction, result });
+      await logTransactionRecord({ agentId, userIntent, transaction, result });
       return res.status(200).json(result);
     }
 
@@ -173,7 +205,7 @@ exports.analyzeTransaction = async (req, res) => {
         extras: { injection: true, behaviorFlags }
       });
       await speakHighRiskAlert(injection.reason);
-      logTransactionRecord({ agentId, userIntent, transaction, result });
+      await logTransactionRecord({ agentId, userIntent, transaction, result });
       return res.status(200).json(result);
     }
 
@@ -221,7 +253,7 @@ exports.analyzeTransaction = async (req, res) => {
       await speakHighRiskAlert(consistency.reason || risk.summary);
     }
 
-    logTransactionRecord({ agentId, userIntent, transaction, result });
+    await logTransactionRecord({ agentId, userIntent, transaction, result });
     return res.status(200).json(result);
   } catch (error) {
     console.error('Error in analysis controller:', error);
@@ -240,9 +272,9 @@ exports.generateScenario = async (req, res) => {
   }
 };
 
-exports.getTransactionLog = (req, res) => {
+exports.getTransactionLog = async (req, res) => {
   try {
-    const records = loadTransactionRecords();
+    const records = await loadTransactionRecords();
     const normalized = records.map(normalizeLog).reverse();
     return res.status(200).json(normalized.slice(0, 50));
   } catch (error) {
@@ -308,9 +340,9 @@ exports.getPolicies = (req, res) => {
   ]);
 };
 
-exports.getOverview = (req, res) => {
+exports.getOverview = async (req, res) => {
   try {
-    const records = loadTransactionRecords().map(normalizeLog);
+    const records = (await loadTransactionRecords()).map(normalizeLog);
     const allowed = records.filter((r) => r.decision === 'ALLOW').length;
     const constrained = records.filter((r) => r.decision === 'CONSTRAIN').length;
     const blocked = records.filter((r) => r.decision === 'BLOCK').length;
