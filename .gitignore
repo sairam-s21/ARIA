@@ -27,6 +27,9 @@ AI_stuff/tests/agentdojo_bench/
 # Vercel
 .vercel
 
+# Claude Code local runtime state
+.claude/scheduled_tasks.lock
+
 # OS / editor
 .DS_Store
 *.suo

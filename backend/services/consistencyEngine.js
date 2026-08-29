@@ -34,19 +34,29 @@ function verifyIntentConsistency(userIntent, extractedIntent, decodedTx) {
     };
   }
 
-  // Fallback: if intent classification failed to produce a usable action
-  // (e.g. keyword extraction returned UNKNOWN), still catch the flagship
-  // "said rebalance/swap, executed an approval" pattern directly off the
-  // raw text so a classification miss doesn't silently pass a mismatch.
-  const intentLower = (userIntent || '').toLowerCase();
-  // Word-boundary match: a plain .includes('swap') would also match inside
-  // "Uniswap", wrongly flagging a legitimate "approve Uniswap..." intent.
-  const statedSwapByKeyword = /\b(rebalance|swap)\b/.test(intentLower);
-
-  if (statedAction === 'UNKNOWN' && statedSwapByKeyword && actualAction === 'APPROVE') {
+  // A stated intent that doesn't map to any recognised financial action
+  // (gibberish, an unrelated read-only request, or anything else keyword
+  // extraction and the AI service both failed to classify) must NOT default
+  // to "consistent". Falling through to matched:true here previously meant
+  // random or unparseable text next to a real swap/approve/transfer/stake
+  // transaction was auto-approved at LOW risk -- exactly the "correctly
+  // authenticated but never actually verified" gap this system exists to
+  // close. An unverifiable intent is treated as a mismatch instead, so it
+  // raises risk and requires at least the CONSTRAIN tier.
+  if (statedAction === 'UNKNOWN') {
     return {
       matched: false,
-      reason: 'Intent requested a portfolio rebalance/swap, but the transaction instead grants token spending approval to another contract.'
+      reason: 'Could not determine a recognised financial intent from the stated instruction, so the proposed transaction cannot be verified against it.'
+    };
+  }
+
+  // Symmetric case: the transaction itself doesn't decode to a known
+  // action (malformed or unsupported transaction shape). Same reasoning --
+  // an action we can't classify can't be confirmed to match the intent.
+  if (actualAction === 'UNKNOWN') {
+    return {
+      matched: false,
+      reason: 'The proposed transaction does not decode to a recognised action, so it cannot be verified against the stated intent.'
     };
   }
 

@@ -29,7 +29,17 @@ function loadTransactionRecords() {
 
 function logTransactionRecord(record) {
   try {
-    if (process.env.VERCEL) return;
+    // Vercel's deployment bundle is read-only, which is why dataDir is
+    // /tmp there instead of the repo's data/ folder -- but /tmp is also
+    // only local to a single serverless instance and isn't guaranteed to
+    // survive a cold start, so this is best-effort persistence for the
+    // demo (transactions logged during a warm instance's lifetime show up
+    // in the Dashboard/Transactions/Security Log), not a durable store.
+    // A previous version skipped writing entirely on Vercel, which meant
+    // the transaction log was permanently empty in production. For real
+    // durability this should write to a proper database (a Supabase
+    // client already exists at services/supabaseClient.js but isn't wired
+    // up to a transactions table yet).
     if (!fs.existsSync(dataDir)) {
       fs.mkdirSync(dataDir, { recursive: true });
     }
