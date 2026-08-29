@@ -60,6 +60,29 @@ node server.js
 Runs on `http://localhost:5050` (see `backend/.env`: `PORT=5050`,
 `AI_SERVICE_URL=http://localhost:8010`). Verify with `http://localhost:5050/api/health`.
 
+**One-time Supabase setup** (needed for the transaction log to persist — without it, the app
+still works but falls back to an in-memory/local-file log that doesn't survive across serverless
+invocations in production). In your Supabase project's SQL Editor, run:
+
+```sql
+create table if not exists public.transactions (
+  id bigint generated always as identity primary key,
+  agent_id text not null,
+  user_intent text not null,
+  transaction jsonb,
+  result jsonb,
+  created_at timestamptz not null default now()
+);
+
+alter table public.transactions enable row level security;
+
+create policy "allow anon read" on public.transactions
+  for select to anon using (true);
+
+create policy "allow anon insert" on public.transactions
+  for insert to anon with check (true);
+```
+
 ## 3. Start the frontend (React)
 
 ```bash
