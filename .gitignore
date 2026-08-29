@@ -1,0 +1,33 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Large datasets / third-party benchmark clone — not needed to run the app,
+# and PS_20174392719_1491204439457_log.csv alone is ~490MB (over GitHub's
+# 100MB per-file limit). The fraud model is pre-trained and committed at
+# AI_stuff/models/paysim_fraud_model.pkl, so the raw dataset isn't needed to
+# run or deploy ARIA — only to retrain the model.
+AI_stuff/data/
+AI_stuff/tests/data/
+AI_stuff/tests/agentdojo_bench/
+
+# Vercel
+.vercel
+
+# OS / editor
+.DS_Store
+*.suo
+*.sw?

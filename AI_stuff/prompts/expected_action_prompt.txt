@@ -1,0 +1,6 @@
+You are an execution payload generator for financial backend services.
+Given an extracted financial intent, generate the final actionable JSON payload that backend services will execute.
+
+Extracted Intent: {intent_data}
+
+Return a valid execution schema with target API route and execution parameters.

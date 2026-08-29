@@ -1,0 +1,513 @@
+[
+  {
+    "agentId": "Portfolio-Rebalancer-01",
+    "userIntent": "I want to rebalance my Aave holdings by swapping 100 DAI for 50 USDC.",
+    "transaction": {
+      "type": "swap",
+      "from": "DAI",
+      "to": "WBTC",
+      "amount": "100"
+    },
+    "result": {
+      "decision": "BLOCK",
+      "riskLevel": "HIGH",
+      "riskScore": 90,
+      "autonomy": "blocked_escalated",
+      "delaySeconds": 0,
+      "intent": {
+        "type": "REBALANCE",
+        "expectedAction": "SWAP",
+        "description": "User intends a portfolio rebalance (asset swap)."
+      },
+      "transaction": {
+        "type": "swap",
+        "from": "DAI",
+        "to": "WBTC",
+        "amount": "100"
+      },
+      "transactionSource": "provided",
+      "consistency": {
+        "matched": false,
+        "reason": "Agent role 'Portfolio Rebalancer' is not authorized to use asset 'DAI'."
+      },
+      "policyViolations": [
+        "UNAUTHORIZED_AGENT_ACTION"
+      ],
+      "behaviorFlags": [],
+      "injection": false,
+      "mlFraudScore": null,
+      "simulation": null,
+      "postExecution": {
+        "status": "not_executed",
+        "alerts": []
+      },
+      "summary": "Agent role 'Portfolio Rebalancer' is not authorized to use asset 'DAI'."
+    },
+    "timestamp": "2026-08-28T22:40:17.519Z"
+  },
+  {
+    "agentId": "Portfolio-Rebalancer-01",
+    "userIntent": "I want to rebalance my Aave holdings by swapping 100 DAI for 50 USDC.",
+    "transaction": {
+      "type": "swap",
+      "from": "DAI",
+      "to": "WBTC",
+      "amount": "100"
+    },
+    "result": {
+      "decision": "BLOCK",
+      "riskLevel": "HIGH",
+      "riskScore": 90,
+      "autonomy": "blocked_escalated",
+      "delaySeconds": 0,
+      "intent": {
+        "type": "REBALANCE",
+        "expectedAction": "SWAP",
+        "description": "User intends a portfolio rebalance (asset swap)."
+      },
+      "transaction": {
+        "type": "swap",
+        "from": "DAI",
+        "to": "WBTC",
+        "amount": "100"
+      },
+      "transactionSource": "provided",
+      "consistency": {
+        "matched": false,
+        "reason": "Agent role 'Portfolio Rebalancer' is not authorized to use asset 'DAI'."
+      },
+      "policyViolations": [
+        "UNAUTHORIZED_AGENT_ACTION"
+      ],
+      "behaviorFlags": [],
+      "injection": false,
+      "mlFraudScore": null,
+      "simulation": null,
+      "postExecution": {
+        "status": "not_executed",
+        "alerts": []
+      },
+      "summary": "Agent role 'Portfolio Rebalancer' is not authorized to use asset 'DAI'."
+    },
+    "timestamp": "2026-08-28T22:41:35.096Z"
+  },
+  {
+    "agentId": "Yield-Optimizer-01",
+    "userIntent": "Approve Uniswap to spend 2500 USDC for an upcoming trade",
+    "transaction": {
+      "type": "approve",
+      "token": "USDC",
+      "spender": "Uniswap",
+      "amount": "2500"
+    },
+    "result": {
+      "decision": "BLOCK",
+      "riskLevel": "HIGH",
+      "riskScore": 90,
+      "autonomy": "blocked_escalated",
+      "delaySeconds": 0,
+      "intent": {
+        "type": "APPROVAL",
+        "expectedAction": "APPROVE",
+        "description": "User intends to grant a token spending approval."
+      },
+      "transaction": {
+        "type": "approve",
+        "token": "USDC",
+        "spender": "Uniswap",
+        "amount": "2500"
+      },
+      "transactionSource": "provided",
+      "consistency": {
+        "matched": false,
+        "reason": "Agent role 'Yield Optimizer' is not authorized to perform action 'APPROVE'."
+      },
+      "policyViolations": [
+        "UNAUTHORIZED_AGENT_ACTION"
+      ],
+      "behaviorFlags": [],
+      "injection": false,
+      "mlFraudScore": null,
+      "simulation": null,
+      "postExecution": {
+        "status": "not_executed",
+        "alerts": []
+      },
+      "summary": "Agent role 'Yield Optimizer' is not authorized to perform action 'APPROVE'."
+    },
+    "timestamp": "2026-08-28T22:46:05.782Z"
+  },
+  {
+    "agentId": "Yield-Optimizer-01",
+    "userIntent": "Approve Uniswap to spend 2500 USDC for an upcoming trade",
+    "transaction": {
+      "type": "approve",
+      "token": "USDC",
+      "spender": "Uniswap",
+      "amount": "2500"
+    },
+    "result": {
+      "decision": "BLOCK",
+      "riskLevel": "HIGH",
+      "riskScore": 90,
+      "autonomy": "blocked_escalated",
+      "delaySeconds": 0,
+      "intent": {
+        "type": "APPROVAL",
+        "expectedAction": "APPROVE",
+        "description": "User intends to grant a token spending approval."
+      },
+      "transaction": {
+        "type": "approve",
+        "token": "USDC",
+        "spender": "Uniswap",
+        "amount": "2500"
+      },
+      "transactionSource": "provided",
+      "consistency": {
+        "matched": false,
+        "reason": "Agent role 'Yield Optimizer' is not authorized to perform action 'APPROVE'."
+      },
+      "policyViolations": [
+        "UNAUTHORIZED_AGENT_ACTION"
+      ],
+      "behaviorFlags": [
+        "CASCADE_AFTER_CONTROL"
+      ],
+      "injection": false,
+      "mlFraudScore": null,
+      "simulation": null,
+      "postExecution": {
+        "status": "not_executed",
+        "alerts": []
+      },
+      "summary": "Agent role 'Yield Optimizer' is not authorized to perform action 'APPROVE'."
+    },
+    "timestamp": "2026-08-28T22:46:15.789Z"
+  },
+  {
+    "agentId": "Yield-Optimizer-01",
+    "userIntent": "Approve Uniswap to spend 2500 USDC for an upcoming trade",
+    "transaction": {
+      "type": "approve",
+      "token": "USDC",
+      "spender": "Uniswap",
+      "amount": "2500"
+    },
+    "result": {
+      "decision": "BLOCK",
+      "riskLevel": "HIGH",
+      "riskScore": 90,
+      "autonomy": "blocked_escalated",
+      "delaySeconds": 0,
+      "intent": {
+        "type": "APPROVAL",
+        "expectedAction": "APPROVE",
+        "description": "User intends to grant a token spending approval."
+      },
+      "transaction": {
+        "type": "approve",
+        "token": "USDC",
+        "spender": "Uniswap",
+        "amount": "2500"
+      },
+      "transactionSource": "provided",
+      "consistency": {
+        "matched": false,
+        "reason": "Agent role 'Yield Optimizer' is not authorized to perform action 'APPROVE'."
+      },
+      "policyViolations": [
+        "UNAUTHORIZED_AGENT_ACTION"
+      ],
+      "behaviorFlags": [
+        "CASCADE_AFTER_CONTROL"
+      ],
+      "injection": false,
+      "mlFraudScore": null,
+      "simulation": null,
+      "postExecution": {
+        "status": "not_executed",
+        "alerts": []
+      },
+      "summary": "Agent role 'Yield Optimizer' is not authorized to perform action 'APPROVE'."
+    },
+    "timestamp": "2026-08-28T22:47:07.514Z"
+  },
+  {
+    "agentId": "Yield-Optimizer-01",
+    "userIntent": "Approve Uniswap to spend 2500 USDC for an upcoming trade",
+    "transaction": {
+      "type": "approve",
+      "token": "USDC",
+      "spender": "Uniswap",
+      "amount": "2500"
+    },
+    "result": {
+      "decision": "BLOCK",
+      "riskLevel": "HIGH",
+      "riskScore": 100,
+      "autonomy": "blocked_escalated",
+      "delaySeconds": 0,
+      "intent": {
+        "type": "APPROVAL",
+        "expectedAction": "APPROVE",
+        "description": "User intends to grant a token spending approval."
+      },
+      "transaction": {
+        "type": "approve",
+        "token": "USDC",
+        "spender": "Uniswap",
+        "amount": "2500"
+      },
+      "transactionSource": "provided",
+      "consistency": {
+        "matched": false,
+        "reason": "Agent role 'Yield Optimizer' is not authorized to perform action 'APPROVE'."
+      },
+      "policyViolations": [
+        "UNAUTHORIZED_AGENT_ACTION"
+      ],
+      "behaviorFlags": [
+        "RAPID_SEQUENCE",
+        "CASCADE_AFTER_CONTROL"
+      ],
+      "injection": false,
+      "mlFraudScore": null,
+      "simulation": null,
+      "postExecution": {
+        "status": "not_executed",
+        "alerts": []
+      },
+      "summary": "Agent role 'Yield Optimizer' is not authorized to perform action 'APPROVE'."
+    },
+    "timestamp": "2026-08-28T22:47:12.030Z"
+  },
+  {
+    "agentId": "Portfolio-Rebalancer-01",
+    "userIntent": "Rebalance my portfolio using 500 USDC",
+    "transaction": {
+      "type": "swap",
+      "from": "USDC",
+      "to": "ETH",
+      "amount": "500"
+    },
+    "result": {
+      "decision": "ALLOW",
+      "riskLevel": "LOW",
+      "riskScore": 15,
+      "autonomy": "autonomous",
+      "delaySeconds": 0,
+      "intent": {
+        "type": "REBALANCE",
+        "expectedAction": "SWAP",
+        "description": "User intends a portfolio rebalance (asset swap)."
+      },
+      "transaction": {
+        "type": "swap",
+        "from": "USDC",
+        "to": "ETH",
+        "amount": "500"
+      },
+      "transactionSource": "provided",
+      "consistency": {
+        "matched": true,
+        "reason": "Transaction outcome aligns with stated intent."
+      },
+      "policyViolations": [],
+      "behaviorFlags": [
+        "NEW_COUNTERPARTY"
+      ],
+      "injection": false,
+      "mlFraudScore": null,
+      "simulation": {
+        "stateBefore": {
+          "usdcBalance": 5000,
+          "ethBalance": 10
+        },
+        "stateAfter": {
+          "usdcBalance": 4500,
+          "ethBalance": 10.166666666666666
+        },
+        "notes": [
+          "Swapped 500 USDC for ETH"
+        ]
+      },
+      "postExecution": {
+        "status": "stable",
+        "alerts": []
+      },
+      "summary": "Behavioral deviation from this agent’s baseline."
+    },
+    "timestamp": "2026-08-28T22:50:39.086Z"
+  },
+  {
+    "agentId": "Portfolio-Rebalancer-01",
+    "userIntent": "Rebalance my portfolio using 500 USDC",
+    "transaction": {
+      "type": "swap",
+      "from": "USDC",
+      "to": "ETH",
+      "amount": "500"
+    },
+    "result": {
+      "decision": "ALLOW",
+      "riskLevel": "LOW",
+      "riskScore": 0,
+      "autonomy": "autonomous",
+      "delaySeconds": 0,
+      "intent": {
+        "type": "REBALANCE",
+        "expectedAction": "SWAP",
+        "description": "User intends a portfolio rebalance (asset swap)."
+      },
+      "transaction": {
+        "type": "swap",
+        "from": "USDC",
+        "to": "ETH",
+        "amount": "500"
+      },
+      "transactionSource": "provided",
+      "consistency": {
+        "matched": true,
+        "reason": "Transaction outcome aligns with stated intent."
+      },
+      "policyViolations": [],
+      "behaviorFlags": [],
+      "injection": false,
+      "mlFraudScore": null,
+      "simulation": {
+        "stateBefore": {
+          "usdcBalance": 5000,
+          "ethBalance": 10
+        },
+        "stateAfter": {
+          "usdcBalance": 4500,
+          "ethBalance": 10.166666666666666
+        },
+        "notes": [
+          "Swapped 500 USDC for ETH"
+        ]
+      },
+      "postExecution": {
+        "status": "stable",
+        "alerts": []
+      },
+      "summary": "Action is consistent with identity, authority, and policy."
+    },
+    "timestamp": "2026-08-28T22:50:39.600Z"
+  },
+  {
+    "agentId": "Portfolio-Rebalancer-01",
+    "userIntent": "Rebalance my portfolio using 500 USDC",
+    "transaction": {
+      "type": "swap",
+      "from": "USDC",
+      "to": "ETH",
+      "amount": "500"
+    },
+    "result": {
+      "decision": "ALLOW",
+      "riskLevel": "LOW",
+      "riskScore": 0,
+      "autonomy": "autonomous",
+      "delaySeconds": 0,
+      "intent": {
+        "type": "REBALANCE",
+        "expectedAction": "SWAP",
+        "description": "User intends a portfolio rebalance (asset swap)."
+      },
+      "transaction": {
+        "type": "swap",
+        "from": "USDC",
+        "to": "ETH",
+        "amount": "500"
+      },
+      "transactionSource": "provided",
+      "consistency": {
+        "matched": true,
+        "reason": "Transaction outcome aligns with stated intent."
+      },
+      "policyViolations": [],
+      "behaviorFlags": [],
+      "injection": false,
+      "mlFraudScore": null,
+      "simulation": {
+        "stateBefore": {
+          "usdcBalance": 5000,
+          "ethBalance": 10
+        },
+        "stateAfter": {
+          "usdcBalance": 4500,
+          "ethBalance": 10.166666666666666
+        },
+        "notes": [
+          "Swapped 500 USDC for ETH"
+        ]
+      },
+      "postExecution": {
+        "status": "stable",
+        "alerts": []
+      },
+      "summary": "Action is consistent with identity, authority, and policy."
+    },
+    "timestamp": "2026-08-28T23:25:52.361Z"
+  },
+  {
+    "agentId": "Portfolio-Rebalancer-01",
+    "userIntent": "kgjg",
+    "transaction": {
+      "type": "swap",
+      "from": "USDC",
+      "to": "ETH",
+      "amount": "500"
+    },
+    "result": {
+      "decision": "ALLOW",
+      "riskLevel": "LOW",
+      "riskScore": 0,
+      "autonomy": "autonomous",
+      "delaySeconds": 0,
+      "intent": {
+        "type": "UNKNOWN",
+        "expectedAction": "UNKNOWN",
+        "description": "Could not determine a structured intent from the provided text."
+      },
+      "transaction": {
+        "type": "swap",
+        "from": "USDC",
+        "to": "ETH",
+        "amount": "500"
+      },
+      "transactionSource": "provided",
+      "consistency": {
+        "matched": true,
+        "reason": "Transaction outcome aligns with stated intent."
+      },
+      "policyViolations": [],
+      "behaviorFlags": [],
+      "injection": false,
+      "mlFraudScore": null,
+      "simulation": {
+        "stateBefore": {
+          "usdcBalance": 5000,
+          "ethBalance": 10
+        },
+        "stateAfter": {
+          "usdcBalance": 4500,
+          "ethBalance": 10.166666666666666
+        },
+        "notes": [
+          "Swapped 500 USDC for ETH"
+        ]
+      },
+      "postExecution": {
+        "status": "watch",
+        "alerts": [
+          "ELEVATED_POST_EXECUTION_VOLUME"
+        ]
+      },
+      "summary": "Action is consistent with identity, authority, and policy."
+    },
+    "timestamp": "2026-08-28T23:26:56.570Z"
+  }
+]

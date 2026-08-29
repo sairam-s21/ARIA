@@ -1,0 +1,26 @@
+[
+  {
+    "agent_id": "Portfolio-Rebalancer-01",
+    "role": "Portfolio Rebalancer",
+    "allowed_assets": ["ETH", "USDC"],
+    "max_transaction_amount": 10000,
+    "approved_contracts": ["Uniswap"],
+    "allowed_actions": ["SWAP", "APPROVE"]
+  },
+  {
+    "agent_id": "Treasury-Manager-01",
+    "role": "Treasury Manager",
+    "allowed_assets": ["ETH", "USDC"],
+    "max_transaction_amount": 50000,
+    "approved_contracts": ["Uniswap", "Aave", "Treasury"],
+    "allowed_actions": ["SWAP", "APPROVE", "TRANSFER"]
+  },
+  {
+    "agent_id": "Yield-Optimizer-01",
+    "role": "Yield Optimizer",
+    "allowed_assets": ["ETH", "USDC"],
+    "max_transaction_amount": 5000,
+    "approved_contracts": ["Aave", "Compound"],
+    "allowed_actions": ["SWAP", "STAKE"]
+  }
+]

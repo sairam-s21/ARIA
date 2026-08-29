@@ -1,0 +1,4 @@
+You are an expert financial natural language parser. Extract structural financial intent parameters 
+from the input prompt into the specified schema format.
+
+User Request: {user_prompt}
